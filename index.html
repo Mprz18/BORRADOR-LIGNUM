@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lignum | Ensamblaje de Mobiliario Premium</title>
+    <meta name="description" content="Servicio exclusivo de armado de muebles a domicilio. Precisión, limpieza y trato de guante blanco.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        charcoal: '#121212',
+                        darkgray: '#1E1E1E',
+                        bone: '#FAFAFA',
+                        alabaster: '#F0EFEA',
+                        walnut: '#6B4C3A',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Estilos Base y Preloader */
+        body { background-color: #FAFAFA; overflow-x: hidden; }
+        
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #121212; z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        .loader-text {
+            color: #FAFAFA; font-family: 'Playfair Display', serif;
+            font-size: 2rem; letter-spacing: 0.2em;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        /* Nav y Overlays */
+        .glass-nav {
+            background: rgba(250, 250, 250, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .img-overlay { background: linear-gradient(to right, rgba(18, 18, 18, 0.85), rgba(18, 18, 18, 0.3)); }
+        
+        /* Indicador de Scroll */
+        .scroll-line {
+            width: 100%; height: 100%; background: #FAFAFA; position: absolute;
+            top: -100%; left: 0; animation: scrollDown 2s cubic-bezier(0.77, 0, 0.175, 1) infinite;
+        }
+
+        /* Animaciones de Aparición (Reveal) */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .reveal-left { opacity: 0; transform: translateX(-30px); transition: all 0.8s ease-out; }
+        .reveal-left.active { opacity: 1; transform: translateX(0); }
+        .reveal-right { opacity: 0; transform: translateX(30px); transition: all 0.8s ease-out; }
+        .reveal-right.active { opacity: 1; transform: translateX(0); }
+
+        /* Lightbox Premium */
+        #lightbox {
+            display: none; position: fixed; z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(18, 18, 18, 0.98); backdrop-filter: blur(10px);
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        #lightbox.active { opacity: 1; }
+        .lightbox-content {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.95);
+            max-width: 90vw; max-height: 90vh; object-fit: contain;
+            transition: transform 0.3s ease-out;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        #lightbox.active .lightbox-content { transform: translate(-50%, -50%) scale(1); }
+        .lightbox-close {
+            position: absolute; top: 25px; right: 40px; color: #FAFAFA;
+            font-size: 45px; font-weight: 300; cursor: pointer; z-index: 1001; transition: color 0.3s;
+        }
+        .lightbox-close:hover { color: #6B4C3A; }
+
+        /* Acordeón FAQ: Cero Bugs usando CSS Grid */
+        .faq-content {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.4s ease-out;
+        }
+        .faq-content-inner { overflow: hidden; }
+        .faq-icon { transition: transform 0.4s ease; }
+        .faq-item.active .faq-content { grid-template-rows: 1fr; }
+        .faq-item.active .faq-icon { transform: rotate(180deg); }
+
+        /* Keyframes */
+        @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
+        @keyframes scrollDown { 0% { top: -100%; } 100% { top: 100%; } }
+        @keyframes slowZoom { 0% { transform: scale(1); } 100% { transform: scale(1.08); } }
+        
+        .hero-bg-anim { animation: slowZoom 30s ease-in-out infinite alternate; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #121212; }
+        ::-webkit-scrollbar-thumb { background: #6B4C3A; }
+        ::-webkit-scrollbar-thumb:hover { background: #5a3f30; }
+    </style>
+</head>
+<body class="text-charcoal font-sans antialiased">
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="loader-text">LIGNUM<span style="color: #6B4C3A;">.</span></div>
+    </div>
+
+    <!-- Navegación -->
+    <nav class="fixed w-full z-50 glass-nav border-b border-gray-200 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 py-5 flex justify-between items-center">
+            <a href="#" class="text-2xl font-serif font-semibold tracking-widest text-charcoal">
+                LIGNUM<span class="text-walnut">.</span>
+            </a>
+            <div class="hidden lg:flex space-x-10 text-sm font-medium tracking-widest uppercase">
+                <a href="#filosofia" class="hover:text-walnut transition-colors duration-300">Filosofía</a>
+                <a href="#servicios" class="hover:text-walnut transition-colors duration-300">Servicios</a>
+                <a href="#portafolio" class="hover:text-walnut transition-colors duration-300">Portafolio</a>
+                <a href="#faq" class="hover:text-walnut transition-colors duration-300">FAQ</a>
+            </div>
+            <a href="https://wa.me/5215566530388?text=Hola,%20deseo%20una%20cotización%20VIP." target="_blank" class="hidden md:inline-flex items-center gap-2 bg-charcoal text-bone px-6 py-3 text-xs uppercase tracking-widest hover:bg-walnut transition-all duration-300 shadow-md">
+                <span>Agendar Servicio</span>
+            </a>
+            
+            <!-- Mobile Menu Btn -->
+            <button class="lg:hidden text-charcoal focus:outline-none" id="mobile-menu-btn" aria-label="Menú">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </div>
+        <!-- Mobile Menu Panel -->
+        <div class="lg:hidden hidden bg-bone border-t border-gray-200 absolute w-full shadow-2xl" id="mobile-menu">
+            <div class="flex flex-col px-6 py-6 space-y-5 text-center text-sm tracking-widest uppercase">
+                <a href="#filosofia" class="block hover:text-walnut">Filosofía</a>
+                <a href="#servicios" class="block hover:text-walnut">Servicios</a>
+                <a href="#portafolio" class="block hover:text-walnut">Portafolio</a>
+                <a href="#faq" class="block hover:text-walnut">FAQ</a>
+                <a href="https://wa.me/5215566530388" class="block py-4 mt-2 bg-charcoal text-bone">Contactar Asesor</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 1. Hero Section -->
+    <section class="relative h-screen flex items-center justify-start overflow-hidden bg-charcoal">
+        <div class="absolute inset-0 w-full h-full">
+            <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=1920" alt="Sala de estar de lujo" class="w-full h-full object-cover hero-bg-anim" />
+            <div class="absolute inset-0 img-overlay"></div>
+        </div>
+        
+        <div class="relative z-10 px-6 lg:px-16 max-w-5xl mt-16">
+            <div class="reveal-left active">
+                <span class="text-walnut font-serif italic text-xl md:text-2xl mb-4 block">Más que ensamblar, creamos tu espacio.</span>
+                <h1 class="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-serif text-bone leading-[1.1] mb-8">
+                    Transformamos tus piezas en el hogar que imaginaste<span class="text-walnut">.</span>
+                </h1>
+                <p class="text-lg md:text-xl text-gray-300 font-light mb-10 max-w-2xl leading-relaxed">
+                    Servicio de ensamblaje de mobiliario a domicilio. Precisión milimétrica, limpieza absoluta y trato de guante blanco. Sin que levantes un solo dedo.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="https://wa.me/5215566530388" target="_blank" class="inline-flex justify-center items-center bg-bone text-charcoal px-8 py-4 text-sm uppercase tracking-widest font-medium hover:bg-gray-200 transition-colors duration-300">
+                        Cotización Inmediata
+                    </a>
+                    <a href="#servicios" class="inline-flex justify-center items-center border border-bone text-bone px-8 py-4 text-sm uppercase tracking-widest font-medium hover:bg-bone hover:text-charcoal transition-colors duration-300">
+                        Explorar Servicios
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center z-10">
+            <span class="text-bone text-xs uppercase tracking-widest mb-3 opacity-70">Descubrir</span>
+            <div class="w-px h-12 md:h-16 bg-gray-600 relative overflow-hidden">
+                <div class="scroll-line"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Filosofía / Estadísticas -->
+    <section id="filosofia" class="py-24 bg-bone overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div class="reveal-left">
+                    <h2 class="text-4xl lg:text-5xl font-serif mb-6 text-charcoal">El lujo reside en la ausencia de preocupaciones.</h2>
+                    <p class="text-gray-600 font-light leading-relaxed mb-6">
+                        Comprar muebles de alta gama es una experiencia emocionante, pero el proceso de ensamblaje suele estar lleno de estrés, tornillos perdidos y manuales incomprensibles. En Lignum, eliminamos esa fricción.
+                    </p>
+                    <p class="text-gray-600 font-light leading-relaxed mb-8">
+                        Nuestros técnicos son verdaderos artesanos del ensamblaje. Llegamos a la hora exacta, protegemos tus pisos, armamos con precisión milimétrica y retiramos hasta el último trozo de cartón.
+                    </p>
+                    <div class="grid grid-cols-2 gap-8 border-t border-gray-200 pt-8">
+                        <div>
+                            <div class="text-4xl font-serif text-walnut mb-2"><span class="counter" data-target="1500">0</span>+</div>
+                            <div class="text-xs uppercase tracking-widest text-gray-500">Proyectos Completados</div>
+                        </div>
+                        <div>
+                            <div class="text-4xl font-serif text-walnut mb-2"><span class="counter" data-target="100">0</span>%</div>
+                            <div class="text-xs uppercase tracking-widest text-gray-500">Garantía de Satisfacción</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative reveal-right">
+                    <img src="https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&q=80&w=800" loading="lazy" alt="Detalle de ensamble de muebles" class="w-full h-auto shadow-2xl object-cover aspect-[4/5] md:aspect-auto">
+                    <div class="absolute -bottom-6 -left-6 md:-bottom-8 md:-left-8 w-40 h-40 md:w-48 md:h-48 bg-charcoal p-6 flex flex-col justify-center items-center text-bone text-center shadow-lg">
+                        <svg class="w-8 h-8 md:w-10 md:h-10 mb-2 md:mb-3 text-walnut" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        <span class="font-serif text-xs md:text-sm">Protección Total</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Proceso -->
+    <section class="py-24 bg-darkgray text-bone relative z-0">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16 md:mb-20 reveal">
+                <span class="text-walnut text-sm uppercase tracking-widest block mb-3">Metodología</span>
+                <h2 class="text-4xl md:text-5xl font-serif mb-6">Un proceso diseñado para tu tranquilidad</h2>
+                <div class="w-20 h-px bg-walnut mx-auto"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 relative">
+                <div class="hidden md:block absolute top-1/2 left-0 w-full h-px bg-gray-700 -z-10 transform -translate-y-1/2"></div>
+                
+                <div class="bg-charcoal p-8 md:p-10 text-center reveal border border-gray-800 hover:border-walnut transition-colors duration-500">
+                    <div class="w-16 h-16 bg-darkgray rounded-full flex items-center justify-center mx-auto mb-6 border border-gray-700 text-2xl font-serif text-walnut italic">1</div>
+                    <h3 class="text-xl font-medium mb-4 tracking-wide">Asesoría & Cotización</h3>
+                    <p class="text-gray-400 font-light text-sm leading-relaxed">Envíanos fotos o enlaces de tus muebles. Recibirás un presupuesto transparente sin costos ocultos, y agendaremos la fecha ideal.</p>
+                </div>
+                
+                <div class="bg-charcoal p-8 md:p-10 text-center reveal border border-gray-800 hover:border-walnut transition-colors duration-500" style="transition-delay: 0.15s;">
+                    <div class="w-16 h-16 bg-darkgray rounded-full flex items-center justify-center mx-auto mb-6 border border-gray-700 text-2xl font-serif text-walnut italic">2</div>
+                    <h3 class="text-xl font-medium mb-4 tracking-wide">Ejecución Impecable</h3>
+                    <p class="text-gray-400 font-light text-sm leading-relaxed">Nuestros técnicos acuden uniformados, protegen el área de trabajo y ensamblan utilizando herramientas de precisión, en total silencio.</p>
+                </div>
+                
+                <div class="bg-charcoal p-8 md:p-10 text-center reveal border border-gray-800 hover:border-walnut transition-colors duration-500" style="transition-delay: 0.3s;">
+                    <div class="w-16 h-16 bg-darkgray rounded-full flex items-center justify-center mx-auto mb-6 border border-gray-700 text-2xl font-serif text-walnut italic">3</div>
+                    <h3 class="text-xl font-medium mb-4 tracking-wide">Entrega & Limpieza</h3>
+                    <p class="text-gray-400 font-light text-sm leading-relaxed">Ubicamos el mueble en su lugar exacto, nivelamos las puertas y retiramos todos los embalajes. Tu espacio queda listo para habitarse.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Servicios -->
+    <section id="servicios" class="py-24 bg-alabaster">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16 reveal">
+                <div class="max-w-2xl">
+                    <h2 class="text-4xl md:text-5xl font-serif mb-4 text-charcoal">Nuestra Expertise</h2>
+                    <p class="text-gray-600 font-light">Especialistas en sistemas de ensamblaje complejos y marcas de prestigio. No improvisamos, dominamos la ingeniería de cada fabricante.</p>
+                </div>
+                <a href="https://wa.me/5215566530388" target="_blank" class="hidden md:inline-block border-b border-charcoal text-charcoal pb-1 hover:text-walnut hover:border-walnut transition-colors uppercase tracking-widest text-sm">Consultar Marca Específica</a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="group bg-bone p-10 reveal border border-transparent hover:border-gray-200 hover:-translate-y-2 transition-all duration-300 shadow-sm hover:shadow-xl flex flex-col h-full">
+                    <svg class="w-12 h-12 text-walnut mb-6 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    <h3 class="text-2xl font-serif mb-3 text-charcoal">Residencial Premium</h3>
+                    <p class="text-gray-600 font-light text-sm mb-6 flex-grow">Armado de clósets, centros de entretenimiento, camas y comedores de marcas como IKEA, Wayfair, West Elm y CB2.</p>
+                    <ul class="space-y-2 text-sm text-gray-500 font-light">
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-walnut rounded-full"></div> Anclaje seguro a pared</li>
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-walnut rounded-full"></div> Nivelación de bisagras</li>
+                    </ul>
+                </div>
+                <div class="group bg-bone p-10 reveal border border-transparent hover:border-gray-200 hover:-translate-y-2 transition-all duration-300 shadow-sm hover:shadow-xl flex flex-col h-full" style="transition-delay: 0.1s;">
+                    <svg class="w-12 h-12 text-walnut mb-6 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    <h3 class="text-2xl font-serif mb-3 text-charcoal">Oficinas Corporativas</h3>
+                    <p class="text-gray-600 font-light text-sm mb-6 flex-grow">Estaciones de trabajo, sillería ergonómica, archiveros y salas de juntas. Configuración rápida para no interrumpir operaciones.</p>
+                    <ul class="space-y-2 text-sm text-gray-500 font-light">
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-walnut rounded-full"></div> Gestión de cables ocultos</li>
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-walnut rounded-full"></div> Proyectos por volumen</li>
+                    </ul>
+                </div>
+                <div class="group bg-bone p-10 reveal border border-transparent hover:border-gray-200 hover:-translate-y-2 transition-all duration-300 shadow-sm hover:shadow-xl flex flex-col h-full" style="transition-delay: 0.2s;">
+                    <svg class="w-12 h-12 text-walnut mb-6 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                    <h3 class="text-2xl font-serif mb-3 text-charcoal">Desmontaje & Mudanza</h3>
+                    <p class="text-gray-600 font-light text-sm mb-6 flex-grow">Desarmado cuidadoso de tus muebles actuales, embalaje de tornillería y re-ensamblaje en tu nuevo domicilio.</p>
+                    <ul class="space-y-2 text-sm text-gray-500 font-light">
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-walnut rounded-full"></div> Inventario de piezas</li>
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-walnut rounded-full"></div> Empaque de herrajes</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Portafolio (Grid Simétrico y Robusto) -->
+    <section id="portafolio" class="py-24 bg-bone">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-4xl font-serif mb-4 text-charcoal">Galería de Proyectos</h2>
+                <p class="text-gray-500 font-light">Un vistazo a los espacios que hemos ayudado a perfeccionar.</p>
+            </div>
+            
+            <!-- Uso de CSS Grid en lugar de columns-3 para 0 bugs de renderizado -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                <!-- Imagen 1 -->
+                <div class="reveal relative group cursor-pointer overflow-hidden bg-gray-200" onclick="openLightbox('https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=1200')">
+                    <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=600" loading="lazy" class="w-full aspect-[4/5] object-cover group-hover:scale-105 transition-transform duration-700" alt="Interior Sala">
+                    <div class="absolute inset-0 bg-charcoal bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+                        <span class="text-bone opacity-0 group-hover:opacity-100 font-serif tracking-widest uppercase text-sm">Ver Proyecto</span>
+                    </div>
+                </div>
+                <!-- Imagen 2 -->
+                <div class="reveal relative group cursor-pointer overflow-hidden bg-gray-200" onclick="openLightbox('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=1200')">
+                    <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=600" loading="lazy" class="w-full aspect-[4/5] object-cover group-hover:scale-105 transition-transform duration-700" alt="Mobiliario de Diseño">
+                    <div class="absolute inset-0 bg-charcoal bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+                        <span class="text-bone opacity-0 group-hover:opacity-100 font-serif tracking-widest uppercase text-sm">Ver Proyecto</span>
+                    </div>
+                </div>
+                <!-- Imagen 3 (Nueva URL segura) -->
+                <div class="reveal relative group cursor-pointer overflow-hidden bg-gray-200" onclick="openLightbox('https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?auto=format&fit=crop&q=80&w=1200')">
+                    <img src="https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?auto=format&fit=crop&q=80&w=600" loading="lazy" class="w-full aspect-[4/5] object-cover group-hover:scale-105 transition-transform duration-700" alt="Estantería Minimalista">
+                    <div class="absolute inset-0 bg-charcoal bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+                        <span class="text-bone opacity-0 group-hover:opacity-100 font-serif tracking-widest uppercase text-sm">Ver Proyecto</span>
+                    </div>
+                </div>
+                <!-- Imagen 4 -->
+                <div class="reveal relative group cursor-pointer overflow-hidden bg-gray-200" onclick="openLightbox('https://images.unsplash.com/photo-1505693314120-0d443867891c?auto=format&fit=crop&q=80&w=1200')">
+                    <img src="https://images.unsplash.com/photo-1505693314120-0d443867891c?auto=format&fit=crop&q=80&w=600" loading="lazy" class="w-full aspect-[4/5] object-cover group-hover:scale-105 transition-transform duration-700" alt="Cocina y Comedor">
+                    <div class="absolute inset-0 bg-charcoal bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+                        <span class="text-bone opacity-0 group-hover:opacity-100 font-serif tracking-widest uppercase text-sm">Ver Proyecto</span>
+                    </div>
+                </div>
+                <!-- Imagen 5 -->
+                <div class="reveal relative group cursor-pointer overflow-hidden bg-gray-200" onclick="openLightbox('https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=1200')">
+                    <img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=600" loading="lazy" class="w-full aspect-[4/5] object-cover group-hover:scale-105 transition-transform duration-700" alt="Mobiliario Oficina">
+                    <div class="absolute inset-0 bg-charcoal bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+                        <span class="text-bone opacity-0 group-hover:opacity-100 font-serif tracking-widest uppercase text-sm">Ver Proyecto</span>
+                    </div>
+                </div>
+                <!-- Imagen 6 -->
+                <div class="reveal relative group cursor-pointer overflow-hidden bg-gray-200" onclick="openLightbox('https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=1200')">
+                    <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=600" loading="lazy" class="w-full aspect-[4/5] object-cover group-hover:scale-105 transition-transform duration-700" alt="Dormitorio">
+                    <div class="absolute inset-0 bg-charcoal bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+                        <span class="text-bone opacity-0 group-hover:opacity-100 font-serif tracking-widest uppercase text-sm">Ver Proyecto</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal Lightbox Mejorado -->
+    <div id="lightbox">
+        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+        <img class="lightbox-content bg-charcoal" id="lightbox-img" alt="Vista ampliada">
+    </div>
+
+    <!-- 6. FAQ (Acordeón rediseñado con CSS Grid - CERO BUGS) -->
+    <section id="faq" class="py-24 bg-alabaster">
+        <div class="max-w-4xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-4xl font-serif mb-4 text-charcoal">Preguntas Frecuentes</h2>
+                <p class="text-gray-500 font-light">Transparencia absoluta en nuestro servicio.</p>
+            </div>
+            
+            <div class="space-y-4">
+                <!-- FAQ 1 -->
+                <div class="faq-item bg-bone border border-gray-200 reveal shadow-sm">
+                    <button class="w-full px-6 py-6 text-left flex justify-between items-center focus:outline-none bg-transparent relative z-10" onclick="toggleFaq(this)">
+                        <span class="font-medium text-charcoal font-serif text-lg">¿Cuentan con seguro en caso de daños?</span>
+                        <svg class="w-5 h-5 faq-icon text-walnut flex-shrink-0 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="faq-content">
+                        <div class="faq-content-inner">
+                            <div class="px-6 pb-6 pt-2 text-gray-600 font-light text-sm leading-relaxed">
+                                Absolutamente. Todos nuestros servicios incluyen una póliza de responsabilidad civil que cubre cualquier daño accidental a tus pisos, paredes o al propio mueble durante el proceso de ensamblaje. Trabajamos con total cuidado, pero te damos la tranquilidad de estar respaldado.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ 2 -->
+                <div class="faq-item bg-bone border border-gray-200 reveal shadow-sm" style="transition-delay: 0.1s;">
+                    <button class="w-full px-6 py-6 text-left flex justify-between items-center focus:outline-none bg-transparent relative z-10" onclick="toggleFaq(this)">
+                        <span class="font-medium text-charcoal font-serif text-lg">¿Qué marcas de muebles ensamblan?</span>
+                        <svg class="w-5 h-5 faq-icon text-walnut flex-shrink-0 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="faq-content">
+                        <div class="faq-content-inner">
+                            <div class="px-6 pb-6 pt-2 text-gray-600 font-light text-sm leading-relaxed">
+                                Somos especialistas en sistemas modulares complejos. Trabajamos frecuentemente con marcas como IKEA, Wayfair, CB2, West Elm, Herman Miller, Pottery Barn, y mobiliario de diseño independiente. Si tienes el manual, nosotros tenemos la experiencia para armarlo a la perfección.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 3 -->
+                <div class="faq-item bg-bone border border-gray-200 reveal shadow-sm" style="transition-delay: 0.2s;">
+                    <button class="w-full px-6 py-6 text-left flex justify-between items-center focus:outline-none bg-transparent relative z-10" onclick="toggleFaq(this)">
+                        <span class="font-medium text-charcoal font-serif text-lg">¿Retiran las cajas y basura al terminar?</span>
+                        <svg class="w-5 h-5 faq-icon text-walnut flex-shrink-0 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="faq-content">
+                        <div class="faq-content-inner">
+                            <div class="px-6 pb-6 pt-2 text-gray-600 font-light text-sm leading-relaxed">
+                                Sí. Entendemos que el servicio premium implica dejar tu espacio mejor de lo que lo encontramos. Desglosamos, apilamos y retiramos todos los cartones, plásticos y materiales de embalaje hacia el área de recolección de tu domicilio.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. CTA y Contacto -->
+    <section class="py-24 bg-charcoal text-bone relative overflow-hidden">
+        <svg class="absolute top-0 right-0 transform translate-x-1/3 -translate-y-1/4 text-gray-800 w-96 h-96 opacity-20" fill="currentColor" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
+        
+        <div class="max-w-5xl mx-auto px-6 lg:px-8 text-center relative z-10 reveal">
+            <span class="text-walnut font-serif italic text-2xl mb-4 block">Es hora de elevar tu espacio.</span>
+            <h2 class="text-4xl md:text-5xl lg:text-6xl font-serif mb-8 leading-tight">Agenda tu ensamblaje <br>con los expertos.</h2>
+            <p class="text-gray-400 font-light mb-12 max-w-2xl mx-auto text-lg">
+                No arriesgues tu inversión ni tu tiempo. Permítenos mostrarte el verdadero significado de un servicio de primera clase.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-6">
+                <a href="https://wa.me/5215566530388?text=Hola,%20me%20gustaría%20agendar%20un%20armado%20premium." target="_blank" class="inline-flex justify-center items-center gap-3 bg-bone text-charcoal px-10 py-5 text-sm uppercase tracking-widest font-bold hover:bg-walnut hover:text-bone transition-all duration-300 shadow-xl">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.88-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.347-.272.297-1.04 1.016-1.04 2.479 0 1.463 1.065 2.876 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                    WhatsApp Corporativo
+                </a>
+                <a href="mailto:contacto@lignum.com" class="inline-flex justify-center items-center gap-3 border border-gray-600 text-bone px-10 py-5 text-sm uppercase tracking-widest font-bold hover:border-bone transition-all duration-300">
+                    Enviar un Email
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-charcoal pt-16 pb-8 border-t border-gray-800 text-gray-400">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+                <div class="md:col-span-2">
+                    <div class="text-3xl font-serif font-semibold tracking-widest text-bone mb-6">
+                        LIGNUM<span class="text-walnut">.</span>
+                    </div>
+                    <p class="font-light mb-6 max-w-sm text-sm leading-relaxed">
+                        Elevando el estándar del ensamblaje de mobiliario. Transformamos el caos del armado en una experiencia de diseño de interiores.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-bone font-serif text-lg mb-4">Navegación</h4>
+                    <ul class="space-y-2 text-sm font-light">
+                        <li><a href="#filosofia" class="hover:text-walnut transition-colors">Nuestra Filosofía</a></li>
+                        <li><a href="#servicios" class="hover:text-walnut transition-colors">Servicios</a></li>
+                        <li><a href="#portafolio" class="hover:text-walnut transition-colors">Proyectos</a></li>
+                        <li><a href="#faq" class="hover:text-walnut transition-colors">Preguntas Frecuentes</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-bone font-serif text-lg mb-4">Contacto</h4>
+                    <ul class="space-y-3 text-sm font-light">
+                        <li class="flex items-center gap-3"><svg class="w-5 h-5 text-walnut" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg> +52 1 55 6653 0388</li>
+                        <li class="flex items-center gap-3"><svg class="w-5 h-5 text-walnut" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> contacto@lignum.com</li>
+                        <li class="flex items-center gap-3 mt-4 pt-4 border-t border-gray-800"><svg class="w-5 h-5 text-walnut" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Lun - Sáb: 9:00 - 18:00</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs font-light">
+                <p>&copy; <script>document.write(new Date().getFullYear())</script> Lignum Ensamblaje Premium. Todos los derechos reservados.</p>
+                <div class="mt-4 md:mt-0 space-x-4">
+                    <a href="#" class="hover:text-bone transition-colors">Aviso de Privacidad</a>
+                    <a href="#" class="hover:text-bone transition-colors">Términos de Servicio</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Botón Flotante de WhatsApp -->
+    <a href="https://wa.me/5215566530388" target="_blank" class="fixed bottom-6 right-6 bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:bg-[#128C7E] transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 z-50 flex items-center justify-center group" aria-label="WhatsApp">
+        <span class="absolute right-16 bg-white text-charcoal text-xs font-bold px-3 py-1.5 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap">Agendar ahora</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.005-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+        </svg>
+    </a>
+
+    <!-- Lógica NATIVA Definitiva -->
+    <script>
+        // 1. Preloader Ultra-rápido
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            setTimeout(() => {
+                preloader.style.opacity = '0';
+                setTimeout(() => { preloader.style.display = 'none'; }, 400);
+            }, 300);
+        });
+
+        // 2. Navbar Scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('shadow-md');
+                nav.style.paddingTop = '12px';
+                nav.style.paddingBottom = '12px';
+            } else {
+                nav.classList.remove('shadow-md');
+                nav.style.paddingTop = '20px';
+                nav.style.paddingBottom = '20px';
+            }
+        });
+
+        // 3. Menú Móvil
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        btn.addEventListener('click', () => { menu.classList.toggle('hidden'); });
+
+        // 4. Reveal Animation Segura
+        function reveal() {
+            const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+            const windowHeight = window.innerHeight;
+            reveals.forEach(el => {
+                const elementTop = el.getBoundingClientRect().top;
+                if (elementTop < windowHeight - 50) {
+                    el.classList.add('active');
+                }
+            });
+        }
+        window.addEventListener('scroll', reveal);
+        setTimeout(reveal, 100);
+
+        // 5. Contadores Numéricos
+        const counters = document.querySelectorAll('.counter');
+        counters.forEach(counter => {
+            const updateCount = () => {
+                const target = +counter.getAttribute('data-target');
+                const count = +counter.innerText;
+                const inc = target / 100;
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + inc);
+                    setTimeout(updateCount, 20);
+                } else {
+                    counter.innerText = target;
+                }
+            };
+            const observer = new IntersectionObserver(entries => {
+                if(entries[0].isIntersecting) {
+                    updateCount();
+                    observer.disconnect();
+                }
+            });
+            observer.observe(counter);
+        });
+
+        // 6. Lightbox (Galería Optimizada)
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        
+        function openLightbox(imgSrc) {
+            lightbox.style.display = 'block';
+            // Pequeño retraso para permitir la transición CSS
+            setTimeout(() => { lightbox.classList.add('active'); }, 10);
+            lightboxImg.src = imgSrc;
+            document.body.style.overflow = 'hidden'; 
+        }
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            setTimeout(() => { 
+                lightbox.style.display = 'none'; 
+                document.body.style.overflow = 'auto'; 
+            }, 300);
+        }
+        lightbox.addEventListener('click', (e) => {
+            if(e.target !== lightboxImg) { closeLightbox(); }
+        });
+
+        // 7. FAQ Acordeón (Grid CSS - 100% fluido)
+        function toggleFaq(btnElement) {
+            const currentItem = btnElement.closest('.faq-item');
+            const allItems = document.querySelectorAll('.faq-item');
+            
+            // Cerrar todos los demás
+            allItems.forEach(item => {
+                if(item !== currentItem) {
+                    item.classList.remove('active');
+                }
+            });
+
+            // Abrir/Cerrar el actual
+            currentItem.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
